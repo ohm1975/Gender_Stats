@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ช่องว่างหญิง-ชายทั่วโลก | Gender Stats</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{--bg:#eef1f6;--card:#fff;--tx:#0f1b2d;--mu:#566178;--ln:#dde2ec;--f:#c2255c;--m:#1971c2;--ac:#3b5bdb;--hero:#0f1b2d;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1019;--card:#161d2e;--tx:#eef1f8;--mu:#9aa5bd;--ln:#27304a;--f:#f06595;--m:#74c0fc;--ac:#91a7ff;--hero:#0f1626;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0b1019;--card:#161d2e;--tx:#eef1f8;--mu:#9aa5bd;--ln:#27304a;--f:#f06595;--m:#74c0fc;--ac:#91a7ff;--hero:#0f1626;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.65 'IBM Plex Sans Thai','Sarabun',system-ui,sans-serif}
+main{max-width:1080px;margin:0 auto;padding:16px 16px 48px}
+h1{font-size:clamp(1.45rem,3.4vw,2.05rem);line-height:1.3;margin:0;font-weight:700}
+h2{font-size:1.18rem;line-height:1.4;margin:0 0 .7rem;font-weight:600}
+h3{font-weight:600}
+.mu{color:var(--mu)}.sm{font-size:.9rem}
+.card{background:var(--card);border:1px solid var(--ln);border-radius:12px;padding:20px;margin:16px 0}
+.hero{position:relative;overflow:hidden;background:var(--hero);color:#fff;border-radius:14px;padding:30px 26px 22px;margin:14px 0}
+.hero::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:linear-gradient(90deg,var(--f) 50%,var(--m) 50%)}
+.hero p{color:#c5cde0;max-width:72ch;margin:.7rem 0 0}.hero .mu{color:#aab4cc}
+.ctx{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.chip{background:rgba(255,255,255,.14);color:#fff;border-radius:999px;padding:2px 14px;font-size:.9rem}
+.tb{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;background:var(--card);border:1px solid var(--ln);border-radius:12px;padding:12px 16px;margin:14px 0}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-left:auto}
+.ctl{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-top:12px}
+label{font-size:.85rem;color:var(--mu);display:flex;flex-direction:column;gap:3px}
+select{font:inherit;padding:8px 10px;border-radius:8px;border:1px solid var(--ln);background:var(--card);color:var(--tx);min-width:170px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.k{background:var(--card);border:1px solid var(--ln);border-radius:10px;padding:16px}
+.k h3{margin:0;font-size:1rem}
+.big{font-size:2rem;font-weight:700;line-height:1.25;margin:.25rem 0 .4rem;font-variant-numeric:tabular-nums}
+.bar{display:flex;align-items:center;gap:8px;font-size:.88rem;margin:5px 0;font-variant-numeric:tabular-nums}.bar span:first-child{width:46px}
+.bar i{display:block;height:14px;border-radius:4px;min-width:2px}.bar b{margin-left:2px;font-weight:600}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+button{font:inherit;padding:7px 14px;border-radius:999px;border:1px solid var(--ln);background:var(--card);color:var(--tx);cursor:pointer}
+button:hover:not(:disabled){border-color:var(--ac)}button:disabled{opacity:.5;cursor:not-allowed}
+button.on,button.pri{background:var(--ac);color:#fff;border-color:var(--ac)}
+button:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.cv{position:relative;height:340px}.leg{font-size:.88rem}.leg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin:0 4px 0 10px;vertical-align:-1px}
+details{margin-top:12px}details summary{cursor:pointer;font-weight:600}
+table{border-collapse:collapse;width:100%;font-size:.9rem}td,th{border-bottom:1px solid var(--ln);padding:8px 6px;text-align:left;vertical-align:top}th{color:var(--mu);font-weight:600}
+[hidden]{display:none!important}
+.dz{display:flex;flex-direction:column;gap:6px;border:2px dashed var(--ln);border-radius:12px;padding:22px 18px;cursor:pointer;font-weight:600;color:var(--tx)}
+.dz:hover,.dz.ov{border-color:var(--ac);background:var(--bg)}.dz input{font:inherit;font-weight:400;max-width:100%}
+.it{border:1px solid var(--ln);border-radius:8px;padding:8px 12px;margin:6px 0;font-size:.92rem}.it.w{border-left:4px solid #f08c00}.it.ok{border-left:4px solid #2f9e44}
+.tg{position:absolute;top:18px;right:16px;background:rgba(255,255,255,.14);color:#fff;border-color:transparent;padding:5px 14px;font-size:.9rem}.tg:hover:not(:disabled){border-color:#fff}.hero h1{padding-right:110px}
+.cvw{overflow-x:auto}
+@media(max-width:560px){.cv{min-width:620px}.tabs{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}.tabs button{flex:none}}
+.mapv svg{display:block;width:100%;height:auto}.mapv path{cursor:pointer}input[type=range]{accent-color:var(--ac);width:100%}
+#busy{position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;background:rgba(11,16,25,.78);color:#fff;font-weight:600;font-size:1.1rem}
+@media(max-width:560px){.tg{position:static;margin-bottom:12px}.hero h1{padding-right:0}main{padding:10px 10px 40px}.hero{padding:26px 16px 18px}.card{padding:16px}.acts{margin-left:0;width:100%}.tb label,.tb select{width:100%}}
+body.pdfmode{background:#fff;--bg:#fff}
+.pdfmode main{max-width:none;width:1000px;margin:0;padding:0}
+.pdfmode .tg,.pdfmode .tb,.pdfmode #up,.pdfmode .ctl,.pdfmode details,.pdfmode .tabs button:not(.on){display:none!important}
+@media print{
+:root,:root:not([data-theme="light"]),:root[data-theme="dark"]{--bg:#fff;--card:#fff;--tx:#0f1b2d;--mu:#566178;--ln:#dde2ec;--f:#c2255c;--m:#1971c2;--ac:#3b5bdb;--hero:#0f1b2d;color-scheme:light}
+.tg,.tb,#up,.ctl,details,#busy,.tabs button:not(.on){display:none!important}
+body{background:#fff}main{max-width:none;padding:0}
+.card,.k,.hero{break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.hero::before,.bar i,.leg i,.chip{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.cv{height:280px}
+}
+</style>
+</head>
+<body><main>
+<header class="hero" id="hero">
+<button id="tg" type="button" class="tg" aria-pressed="false"></button>
+<h1>ผู้หญิงกับผู้ชาย ต่างกันแค่ไหนในแต่ละประเทศ</h1>
+<p>ข้อมูลจากฐานข้อมูล Gender Statistics ของ World Bank ปี 1960–2024 เปรียบเทียบหญิง-ชายใน 5 เรื่อง: การทำงาน การว่างงาน การเรียนมัธยม อายุขัย และผู้หญิงในรัฐสภา อัปโหลดไฟล์ CSV ของคุณด้านล่าง แล้วเลือกประเทศและปีเพื่ออ่านสรุปได้ทันที</p>
+<div class="ctx" id="ctx" hidden></div>
+<p class="mu sm" id="note"></p>
+</header>
+<div class="tb" id="mainctl" hidden>
+<label>ประเทศ<select id="cs"></select></label>
+<label>ปีที่ต้องการดู<select id="ys"></select></label>
+<label>เทียบกับประเทศ<select id="cs2"></select></label>
+<label>เทียบกับกลุ่ม<select id="bs"></select></label>
+<label>ข้อมูลที่ใช้<select id="vs"><option value="after">หลังคลีน (เฉพาะประเทศ)</option><option value="before">ก่อนคลีน (รวมกลุ่มรวม)</option></select></label>
+<div class="acts"><button id="re" type="button">อัปโหลดไฟล์ใหม่</button><button id="csvb" type="button">ส่งออก CSV</button><button id="prt" type="button">พิมพ์</button><button id="pdf" type="button" class="pri">ส่งออก PDF</button></div>
+</div>
+<div class="card" id="up"><h2>นำเข้าข้อมูลของคุณ</h2>
+<p class="sm mu" style="margin:0 0 10px">ไฟล์ CSV รูปแบบ World Bank Gender Statistics (คอลัมน์ Country Name, Country Code, Indicator Name, Indicator Code และคอลัมน์ปี 1960, 1961, …) ไฟล์ใหญ่หลายร้อย MB ก็ได้ ประมวลผลในเบราว์เซอร์ของคุณ ไม่ถูกส่งไปที่ไหน</p>
+<div class="grid">
+<label class="dz" id="dz1">① ไฟล์ก่อนคลีน (จำเป็น)<input type="file" id="f1" accept=".csv,text/csv"><span id="s1" class="sm mu" style="font-weight:400">คลิกเลือก หรือลากไฟล์มาวาง</span></label>
+<label class="dz" id="dz2">② ไฟล์หลังคลีน (ไม่บังคับ)<input type="file" id="f2" accept=".csv,text/csv"><span id="s2" class="sm mu" style="font-weight:400">ถ้าไม่ใส่ ระบบจะคลีนให้เอง (ลบแถวว่าง และแยกกลุ่มรวมออกจากประเทศ)</span></label>
+</div>
+<div class="ctl"><button class="on" id="go" type="button" disabled>เริ่มวิเคราะห์</button><button id="last" type="button" hidden></button><button id="fg" type="button" hidden>ลบไฟล์ที่จำไว้</button></div>
+<p class="sm" id="pg" style="margin:8px 0 0"></p></div>
+<div id="app" hidden>
+
+<section class="card"><h2>1) ภาพรวมช่องว่างหญิง-ชาย</h2>
+<p class="sm" id="sum" style="margin:0 0 4px"></p>
+<p class="sm mu" id="meta" style="margin:0 0 14px"></p>
+<div class="grid" id="cards"></div></section>
+
+<div class="card">
+<h2>2) แนวโน้มตลอด 60 ปี</h2>
+<div class="tabs" id="tabs1"></div>
+<p class="sm mu" id="exp1" style="margin:0 0 8px"></p>
+<div class="ctl" style="margin:0 0 6px"><label>ชนิดกราฟ<select id="t1"><option value="line">เส้น</option><option value="area">พื้นที่</option><option value="step">ขั้นบันได</option><option value="bar">แท่งตั้ง</option><option value="hbar">แท่งนอน</option><option value="stacked">แท่งซ้อน</option><option value="scatter">จุดกระจาย</option><option value="radar">เรดาร์</option><option value="pie">วงกลม (Pie)</option><option value="doughnut">โดนัท</option><option value="polar">โพลาร์</option></select></label></div>
+<div class="leg"><i style="background:var(--f)"></i>หญิง<i style="background:var(--m)"></i>ชาย <span class="mu" id="bl"></span></div>
+<p class="sm mu" id="tn1" style="margin:4px 0"></p>
+<div class="cvw"><div class="cv"><canvas id="c1"></canvas></div></div>
+</div>
+
+<div class="card">
+<h2>3) เทียบกับประเทศอื่นทั่วโลก</h2>
+<div class="tabs" id="tabs2"></div>
+<div class="tabs" id="mode"></div>
+<div class="ctl" style="margin:0 0 6px"><label>ชนิดกราฟ<select id="t2"><option value="line">เส้น</option><option value="area">พื้นที่</option><option value="step">ขั้นบันได</option><option value="bar">แท่งตั้ง</option><option value="hbar">แท่งนอน</option><option value="stacked">แท่งซ้อน</option><option value="scatter">จุดกระจาย</option><option value="radar">เรดาร์</option><option value="pie">วงกลม (Pie)</option><option value="doughnut">โดนัท</option><option value="polar">โพลาร์</option></select></label></div>
+<p class="sm" id="rk" style="margin:0 0 8px"></p>
+<p class="sm mu" id="tn2" style="margin:4px 0"></p>
+<div class="cvw"><div class="cv"><canvas id="c2"></canvas></div></div>
+</div>
+
+<div class="card" id="mapc"><h2>4) แผนที่โลก: ช่องว่างหญิง-ชายรายประเทศ</h2>
+<div class="tabs" id="tabs3"></div>
+<div class="ctl" style="margin:0 0 8px"><button id="pl" type="button">▶ เล่น</button><label style="flex:1;min-width:220px">ปี <b id="yl" style="color:var(--tx)"></b><input type="range" id="yr" step="1"></label></div>
+<p class="sm mu" id="mp" style="margin:0 0 8px"></p>
+<div class="mapv" id="mapv"></div>
+<div id="mapl" class="sm" style="margin-top:8px"></div>
+</div>
+<div class="card"><h2>5) เปรียบเทียบข้อมูลก่อนคลีน กับ หลังคลีน</h2>
+<p class="sm mu" style="margin:0 0 10px">ก่อนคลีน = ไฟล์ต้นฉบับ (มีแถวที่ไม่มีค่าเลย และมีกลุ่มรวมอย่าง World ปนกับประเทศ) · หลังคลีน = ลบแถวว่างและแยกประเทศออกจากกลุ่มรวม ตัวเลขที่มีอยู่ไม่ถูกแก้ไข ลองสลับ “ข้อมูลที่ใช้” ด้านบนเพื่อดูผลต่อการจัดอันดับ</p>
+<p class="sm" id="qsrc" style="margin:0 0 8px"></p>
+<div class="grid" id="qk"></div>
+<div class="ctl" style="margin:12px 0 6px"><label>ดูเรื่อง<select id="m3"><option value="rows">จำนวนแถวข้อมูล</option><option value="pct">สัดส่วนช่องว่าง (%)</option></select></label><label>ชนิดกราฟ<select id="t3"><option value="line">เส้น</option><option value="area">พื้นที่</option><option value="step">ขั้นบันได</option><option value="bar">แท่งตั้ง</option><option value="hbar">แท่งนอน</option><option value="stacked">แท่งซ้อน</option><option value="scatter">จุดกระจาย</option><option value="radar">เรดาร์</option><option value="pie">วงกลม (Pie)</option><option value="doughnut">โดนัท</option><option value="polar">โพลาร์</option></select></label></div>
+<p class="sm mu" id="tn3" style="margin:4px 0"></p>
+<div class="cvw"><div class="cv"><canvas id="c3"></canvas></div></div>
+<details><summary>สำหรับผู้ดูแลข้อมูล: ข้อมูลนี้ผ่านการคลีนอย่างไร</summary>
+<table style="margin-top:10px">
+<tr><th>ขั้นตอน</th><th>ผลลัพธ์</th></tr>
+<tr><td>ข้อมูลต้นฉบับ</td><td id="dq1">–</td></tr>
+<tr><td>ลบแถวที่ไม่มีค่าเลยทุกปี</td><td id="dq2">–</td></tr>
+<tr><td>แยกประเทศออกจากกลุ่มรวม (เช่น World, High income)</td><td>เพิ่มคอลัมน์ Entity_Type หน้านี้จัดอันดับเฉพาะประเทศ</td></tr>
+<tr><td>ช่องที่ไม่มีข้อมูล</td><td>ดูสัดส่วนในการ์ดด้านบน ปล่อยว่างไม่เติม 0 ถ้าปีที่เลือกไม่มีค่า หน้านี้ใช้ปีล่าสุดก่อนหน้าที่มีข้อมูลและแจ้งปีกำกับไว้เสมอ</td></tr>
+</table>
+<p class="sm mu"><span id="dq3"></span> ค่าผู้ชายของ “ผู้หญิงในรัฐสภา” คำนวณเป็น 100 ลบค่าผู้หญิง</p>
+</details>
+</div>
+<div class="card" id="dqc"><div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:center">
+<div><h2 style="margin:0">6) ตรวจคุณภาพข้อมูล (Data Quality Checker)</h2><p class="sm mu" id="dqf" style="margin:0"></p></div>
+<div class="ctl" style="margin:0"><label>ตรวจไฟล์<select id="qv"><option value="after">หลังคลีน</option><option value="before">ก่อนคลีน</option></select></label><button id="qre" type="button" class="on">ตรวจสอบอีกครั้ง</button><button id="qcp" type="button">คัดลอกรายงาน CSV</button></div></div>
+<div class="grid" id="dqk" style="margin-top:12px"></div>
+<p class="sm mu" id="dqs" style="margin:10px 0"></p>
+<div id="dql"></div><textarea id="qta" rows="6" hidden style="width:100%;margin-top:8px;font:12px monospace"></textarea></div>
+</div></main>
+<div id="busy" hidden><span id="busyt"></span></div>
+<script>
+const DEF=[{"id": "lfp", "t": "การทำงาน", "u": "%", "d": "คนวัยทำงานที่อยู่ในตลาดแรงงาน (ทำงานหรือกำลังหางาน) ร้อยละของประชากรอายุ 15 ปีขึ้นไป", "s": "ผู้หญิงอยู่ในตลาดแรงงาน {f}% ผู้ชาย {m}%", "cd": ["SL.TLF.CACT.FE.ZS", "SL.TLF.CACT.MA.ZS"]}, {"id": "un", "t": "ว่างงาน", "u": "%", "d": "คนที่อยากทำงานแต่ไม่มีงาน ร้อยละของกำลังแรงงาน ยิ่งสูงยิ่งหางานยาก", "s": "ผู้หญิงว่างงาน {f}% ผู้ชาย {m}%", "cd": ["SL.UEM.TOTL.FE.ZS", "SL.UEM.TOTL.MA.ZS"]}, {"id": "sec", "t": "เรียนมัธยม", "u": "%", "d": "อัตราเข้าเรียนมัธยม (นักเรียนทั้งหมดเทียบกับเด็กในวัยมัธยม) เกิน 100% ได้ถ้ามีนักเรียนอายุเกินเกณฑ์", "s": "อัตราเข้าเรียนมัธยม ผู้หญิง {f}% ผู้ชาย {m}%", "cd": ["SE.SEC.ENRR.FE", "SE.SEC.ENRR.MA"]}, {"id": "le", "t": "อายุขัย", "u": "ปี", "d": "อายุคาดเฉลี่ยของคนที่เกิดในปีนั้น (ปี)", "s": "ผู้หญิงคาดว่าอยู่ได้ {f} ปี ผู้ชาย {m} ปี", "cd": ["SP.DYN.LE00.FE.IN", "SP.DYN.LE00.MA.IN"]}, {"id": "pa", "t": "ผู้หญิงในรัฐสภา", "u": "%", "d": "สัดส่วนที่นั่งในรัฐสภาแห่งชาติที่ผู้หญิงถือครอง (ร้อยละ) ค่าของผู้ชายคือส่วนที่เหลือ", "s": "ผู้หญิงถือที่นั่งรัฐสภา {f}% ที่เหลือ {m}%", "cd": ["SG.GEN.PARL.ZS", null]}];let D=null;
+let I=DEF,Y=[];const fmt=(v,d=1)=>v==null?'–':v.toLocaleString('en-US',{maximumFractionDigits:d,minimumFractionDigits:d});
+let st={c:'THA',y:2023,i:0,j:0,mode:'f',v:'after',t1:'line',t2:'hbar',t3:'bar',m3:'rows'};
+const $=id=>document.getElementById(id),css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const ents=()=>Object.entries(D.c).filter(([k,v])=>k!=='WLD'&&(st.v==='before'||!v[2]));
+function at(code,k,yr){const a=D.c[code][1][k.id];if(!a)return null;for(let x=Y.indexOf(yr);x>=0;x--){if(a.f[x]!=null&&a.m[x]!=null)return{f:a.f[x],m:a.m[x],y:Y[x]}}return null}
+function fill(){const cs=$('cs');cs.innerHTML='';const g1=document.createElement('optgroup');g1.label='ประเทศ';const g2=document.createElement('optgroup');g2.label='กลุ่มรวม (ไม่ใช่ประเทศ)';
+ ents().sort((a,b)=>a[1][0].localeCompare(b[1][0])).forEach(([k,v])=>(v[2]?g2:g1).appendChild(new Option(v[0],k)));
+ cs.appendChild(g1);if(g2.children.length)cs.appendChild(g2);if(![...cs.options].some(o=>o.value===st.c))st.c=cs.options[0].value;cs.value=st.c;fill2();fillB()}
+function build(){
+  $('cs').onchange=()=>{st.c=$('cs').value;render()};$('ys').onchange=()=>{st.y=+$('ys').value;render()};
+ $('vs').onchange=()=>{st.v=$('vs').value;fill();render()};
+ ['t1','t2','t3','m3'].forEach(id=>$(id).onchange=()=>{st[id]=$(id).value;render()});
+ ['tabs1','tabs2','tabs3'].forEach((t,n)=>{I.forEach((k,i)=>{const b=document.createElement('button');b.textContent=k.t;b.onclick=()=>{st[n?'j':'i']=i;render()};$(t).appendChild(b)})});
+ [['f','หญิงนำมากที่สุด'],['m','ชายนำมากที่สุด']].forEach(([v,l])=>{const b=document.createElement('button');b.textContent=l;b.onclick=()=>{st.mode=v;render()};b.dataset.v=v;$('mode').appendChild(b)});
+ matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>D&&render());
+}
+function sentence(k,r,name){const g=r.f-r.m,a=Math.abs(g),u=k.u==='%'?'จุดเปอร์เซ็นต์':'ปี',w=g>=0?'สูงกว่า':'ต่ำกว่า';
+ return `${name} ปี ${r.y}: ${k.s.replace('{f}',fmt(r.f)).replace('{m}',fmt(r.m))} ผู้หญิง${w}ผู้ชาย ${fmt(a)} ${u}`}
+function render(){
+ const name=D.c[st.c][0],W=st.b,bn=D.c[W]?D.c[W][0]:'กลุ่มอ้างอิง';
+ $('cards').innerHTML=I.map(k=>{const r=at(st.c,k,st.y),w=D.c[W]?at(W,k,st.y):null;
+  if(!r)return `<div class="k"><h3>${k.t}</h3><p class="mu sm">ไม่มีข้อมูลของ ${name} ในหัวข้อนี้</p></div>`;
+  const g=r.f-r.m,sc=k.u==='%'?100:90,wg=w?w.f-w.m:null;
+  return `<div class="k"><h3>${k.t}</h3><div class="big">${g>=0?'+':'−'}${fmt(Math.abs(g))} <span class="sm mu">${k.u==='%'?'จุดเปอร์เซ็นต์':'ปี'} (หญิง−ชาย)</span></div>
+  <div class="bar"><span>หญิง</span><i style="width:${Math.min(r.f/sc,1.15)*55}%;background:var(--f)"></i><b>${fmt(r.f)}</b></div>
+  <div class="bar"><span>ชาย</span><i style="width:${Math.min(r.m/sc,1.15)*55}%;background:var(--m)"></i><b>${fmt(r.m)}</b></div>
+  <p class="sm" style="margin:8px 0 4px">${sentence(k,r,name)}</p>
+  <p class="sm mu" style="margin:0">ค่า${bn}: ${wg==null?'–':(wg>=0?'+':'−')+fmt(Math.abs(wg))} · ข้อมูลปี ${r.y}</p>${cmpLine(k)}</div>`}).join('');
+ let n=[];if(I.some(k=>{const r=at(st.c,k,st.y);return r&&r.y<st.y}))n.push('บางหัวข้อไม่มีข้อมูลของปี '+st.y+' จึงแสดงปีล่าสุดก่อนหน้าที่มีข้อมูล (ระบุปีไว้ในแต่ละการ์ด)');
+ if(st.v==='before')n.push('โหมดก่อนคลีน: รายการประเทศและการจัดอันดับจะรวมกลุ่มรวม (เช่น High income) ที่ไม่ใช่ประเทศ');
+ $('note').textContent=n.join(' · ');
+ [...$('tabs1').children].forEach((b,i)=>b.classList.toggle('on',i===st.i));[...$('tabs2').children].forEach((b,i)=>b.classList.toggle('on',i===st.j));[...$('tabs3').children].forEach((b,i)=>b.classList.toggle('on',i===st.j));[...$('mode').children].forEach(b=>b.classList.toggle('on',b.dataset.v===st.mode));
+ ctx();trend();rank();map();quality();
+}
+let ch1,ch2,ch3;
+function opts(){const t=css('--mu'),l=css('--ln');return{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:t},grid:{color:l}},y:{ticks:{color:t},grid:{color:l}}}}}
+const TYPES_CIRC=['pie','doughnut','polar'],PAL=['#4c6ef5','#f06595','#20c997','#fcc419','#ff922b','#845ef7','#339af0','#51cf66','#e64980','#868e96'];
+function mk(cv,old,type,labels,sets,o2){
+ if(old)old.destroy();o2=o2||{};
+ const circ=TYPES_CIRC.includes(type),tx=css('--mu'),gl=css('--ln'),cfg={options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:circ||!!o2.legend,labels:{color:tx}}}}};
+ if(circ){cfg.type=type==='polar'?'polarArea':type;cfg.data={labels,datasets:sets.map(s=>({label:s.label,data:s.data.map(x=>x==null?0:Math.abs(x)),backgroundColor:labels.map((_,i)=>PAL[i%PAL.length]),borderColor:css('--card')}))};
+  if(type==='polar')cfg.options.scales={r:{ticks:{color:tx,backdropColor:'transparent'},grid:{color:gl}}};return new Chart(cv,cfg)}
+ if(type==='radar'){cfg.type='radar';cfg.data={labels,datasets:sets.map(s=>({label:s.label,data:s.data,borderColor:s.color,backgroundColor:s.color+'33',pointRadius:2,borderWidth:2}))};
+  cfg.options.scales={r:{ticks:{color:tx,backdropColor:'transparent'},grid:{color:gl},angleLines:{color:gl},pointLabels:{color:tx}}};return new Chart(cv,cfg)}
+ const sc={x:{ticks:{color:tx},grid:{color:gl}},y:{ticks:{color:tx},grid:{color:gl}}};
+ if(type==='hbar')cfg.options.indexAxis='y';
+ if(type==='stacked'){sc.x.stacked=true;sc.y.stacked=true}
+ const cat=sc[type==='hbar'?'y':'x'];cat.ticks.autoSkip=labels.length>20;if(type!=='hbar')cat.ticks.maxRotation=60;
+ cfg.options.scales=sc;
+ if(type==='scatter'){const num=labels.every(l=>typeof l==='number');cfg.type='scatter';
+  cfg.data={datasets:sets.map(s=>({label:s.label,data:s.data.map((v,i)=>v==null?null:{x:num?labels[i]:i,y:v}).filter(Boolean),backgroundColor:s.color,borderColor:s.color,pointRadius:3.5}))};
+  sc.x.ticks.stepSize=num?undefined:1;sc.x.ticks.callback=num?(v=>String(v)):(v=>labels[v]||'');return new Chart(cv,cfg)}
+ const bar=['bar','hbar','stacked'].includes(type);cfg.type=bar?'bar':'line';
+ cfg.data={labels,datasets:sets.map(s=>bar?{label:s.label,data:s.data,backgroundColor:s.col||s.color}:{label:s.label,data:s.data,borderColor:s.color,backgroundColor:s.color+'33',fill:type==='area',stepped:type==='step',borderWidth:2.5,pointRadius:(type==='step'||labels.length>20)?0:3,tension:type==='step'?0:.2})};
+ (o2.extra||[]).forEach(e=>cfg.data.datasets.push(e));
+ return new Chart(cv,cfg)}
+function trend(){
+ const k=I[st.i];$('exp1').textContent=k.d;const a=D.c[st.c][1][k.id]||{f:[],m:[]},w=(D.c[st.b]&&D.c[st.b][1][k.id])||{f:[],m:[]},ty=st.t1,F=css('--f'),M=css('--m'),circ=['radar','pie','doughnut','polar'].includes(ty);
+ let labels=Y,A=a.f,B=a.m;
+ if(circ){const dec=[...new Set(Y.map(y=>Math.floor(y/10)*10))];labels=dec.map(d=>d+'s');const av=arr=>dec.map(d=>{const v=Y.map((y,i)=>Math.floor(y/10)*10===d?arr[i]:null).filter(x=>x!=null);return v.length?Math.round(v.reduce((s,x)=>s+x,0)/v.length*10)/10:null});A=av(a.f);B=av(a.m)}
+ const wl=['line','area','step','bar'].includes(ty);
+ $('tn1').textContent=circ?'กราฟชนิดนี้แสดงค่าเฉลี่ยรายทศวรรษ'+(ty==='pie'||ty==='doughnut'?' (วงนอก = หญิง, วงใน = ชาย)':ty==='polar'?' (หญิงและชายซ้อนทับกัน)':'')+' ใช้เทียบขนาด ไม่ใช่สัดส่วนรวม 100%':(wl?'':'เส้นขาดค่ากลุ่มอ้างอิงแสดงเฉพาะกราฟเส้น พื้นที่ ขั้นบันได และแท่งตั้ง');
+ const ex=wl?[{type:'line',label:bnm()+' (หญิง)',data:w.f,borderColor:F,borderDash:[5,4],borderWidth:1.2,pointRadius:0},{type:'line',label:bnm()+' (ชาย)',data:w.m,borderColor:M,borderDash:[5,4],borderWidth:1.2,pointRadius:0}]:[];
+ if(wl&&st.c2&&D.c[st.c2]){const b=D.c[st.c2][1][k.id]||{f:[],m:[]},n2=D.c[st.c2][0];ex.push({type:'line',label:n2+' (หญิง)',data:b.f,borderColor:F,borderDash:[2,3],borderWidth:2,pointRadius:0},{type:'line',label:n2+' (ชาย)',data:b.m,borderColor:M,borderDash:[2,3],borderWidth:2,pointRadius:0})}
+ ch1=mk($('c1'),ch1,ty,labels,[{label:'หญิง',data:A,color:F},{label:'ชาย',data:B,color:M}],{extra:ex,legend:ty==='radar'||(wl&&!!st.c2)});
+}
+function rank(){
+ const k=I[st.j],list=[];
+ ents().forEach(([code,v])=>{const r=at(code,k,st.y);if(r&&r.y>=st.y-5)list.push({code,n:v[0]+(v[2]?' (กลุ่มรวม)':''),a:v[2],g:r.f-r.m})});
+ const sg=st.mode==='f'?-1:1;list.sort((x,y)=>sg*(x.g-y.g));
+ const me=list.findIndex(x=>x.code===st.c),top=list.slice(0,10),u=k.u==='%'?'จุด':'ปี',na=top.filter(x=>x.a).length;
+ $('rk').textContent=(me<0?`ไม่มีข้อมูลล่าสุดของ ${D.c[st.c][0]} ใน “${k.t}” เพื่อจัดอันดับ`:`${D.c[st.c][0]} อยู่ลำดับที่ ${me+1} จาก ${list.length} รายการที่มีข้อมูล (เรียงตาม ${st.mode==='f'?'หญิงนำมากที่สุด':'ชายนำมากที่สุด'})`)+` · กราฟแสดง 10 อันดับแรก ค่าเป็น หญิง−ชาย (${u}) ในช่วง 5 ปีล่าสุดถึงปี ${st.y}`+(na?` · ${na} จาก 10 อันดับเป็นกลุ่มรวม ไม่ใช่ประเทศ (สีเทา)`:'');
+ const col=x=>x.code===st.c?css('--ac'):x.a?css('--mu'):(st.mode==='f'?css('--f'):css('--m'));
+ $('tn2').textContent=TYPES_CIRC.includes(st.t2)?'วงกลม/โดนัท/โพลาร์ใช้ค่าสัมบูรณ์ของช่องว่าง เพื่อเทียบขนาดระหว่างประเทศ':'';
+ ch2=mk($('c2'),ch2,st.t2,top.map(x=>x.n),[{label:'ช่องว่าง หญิง−ชาย',data:top.map(x=>+x.g.toFixed(1)),color:st.mode==='f'?css('--f'):css('--m'),col:top.map(col)}],{});
+}
+function quality(){
+ const g=D.q.g;
+ $('qk').innerHTML=[['จำนวนแถว',fmt(g.rb,0)+' → '+fmt(g.ra,0),'ลบแถวที่ไม่มีค่าเลย '+fmt(g.rb-g.ra,0)+' แถว'],['ช่องว่างในตาราง',fmt(g.mb)+'% → '+fmt(g.ma)+'%','ก่อน → หลังคลีน'],['ตัวชี้วัด',fmt(g.ni,0),'ครบทุกตัว ไม่ถูกลบ'],['ประเทศและกลุ่ม',fmt(g.ne,0),'แยกประเทศกับกลุ่มรวมด้วยคอลัมน์ Entity_Type']].map(([t,b,s])=>`<div class="k"><h3>${t}</h3><div class="big" style="font-size:1.4rem">${b}</div><p class="sm mu" style="margin:0">${s}</p></div>`).join('');
+ const rows=st.m3==='rows',p=D.q.per;
+ $('tn3').textContent=TYPES_CIRC.includes(st.t3)?'ใช้เทียบขนาดระหว่างหัวข้อ'+(st.t3==='polar'?' (ก่อนและหลังคลีนซ้อนทับกัน)':' (วงนอก = ก่อนคลีน, วงใน = หลังคลีน)'):'';
+ ch3=mk($('c3'),ch3,st.t3,I.map(k=>k.t),[{label:'ก่อนคลีน',data:p.map(x=>rows?x.rb:x.mb),color:css('--mu')},{label:'หลังคลีน',data:p.map(x=>rows?x.ra:x.ma),color:css('--ac')}],{legend:true});
+}
+let F1=null,F2=null;const pg=(t,p)=>$('pg').textContent=p==null?t:`${t}… ${Math.min(100,Math.round(p*100))}%`;
+function pick(n,f){if(!f)return;if(n===1)F1=f;else F2=f;$('s'+n).textContent=f.name+' ('+(f.size/1048576).toFixed(1)+' MB)';$('go').disabled=!F1}
+[1,2].forEach(n=>{const z=$('dz'+n),i=$('f'+n);i.onchange=()=>pick(n,i.files[0]);z.ondragover=e=>{e.preventDefault();z.classList.add('ov')};z.ondragleave=()=>z.classList.remove('ov');z.ondrop=e=>{e.preventDefault();z.classList.remove('ov');pick(n,e.dataTransfer.files[0])}});
+$('go').onclick=go;$('re').onclick=()=>{$('up').hidden=false;$('app').hidden=true;$('mainctl').hidden=true};
+function scan(file,label){return new Promise((res,rej)=>{
+ const codes=new Set(DEF.flatMap(k=>k.cd.filter(Boolean)));let ix=null,yi=[];
+ const S={ds:new Set(),dup:0,bad:0,rows:0,keep:0,nn:0,cells:0,per:{},data:{},names:{},ent:{},order:[],yrs:[],et:-1};
+ Papa.parse(file,{skipEmptyLines:true,chunkSize:1<<21,
+  chunk:(r,ps)=>{try{const rows=r.data;
+   if(!ix){const h=rows.shift().map(x=>String(x).replace(/^\uFEFF/,'').trim());ix={};h.forEach((x,i)=>ix[x]=i);
+    for(const x of ['Country Name','Country Code','Indicator Code'])if(!(x in ix))throw new Error('ไม่พบคอลัมน์ '+x);
+    h.forEach((x,i)=>{if(/^\d{4}$/.test(x)){yi.push(i);S.yrs.push(+x)}});if(!yi.length)throw new Error('ไม่พบคอลัมน์ปี (เช่น 1960, 1961)');
+    if('Entity_Type' in ix)S.et=ix['Entity_Type']}
+   for(const row of rows){const cc=row[ix['Country Code']],ic=row[ix['Indicator Code']];if(cc==null||ic==null)continue;
+    S.rows++;{const nm=row[ix['Country Name']],key=cc+'|'+ic;if(!cc||!ic||!nm)S.bad++;if(S.ds.has(key))S.dup++;else S.ds.add(key)}let n=0;for(let j=0;j<yi.length;j++){const v=row[yi[j]];if(v!==''&&v!=null&&!isNaN(+v))n++}
+    S.cells+=yi.length;S.nn+=n;if(n)S.keep++;
+    if(!(cc in S.names)){S.names[cc]=row[ix['Country Name']];S.order.push(cc);if(S.et>=0)S.ent[cc]=row[S.et]==='Aggregate'}
+    const p=S.per[ic]||(S.per[ic]={rb:0,ra:0,nz:0});p.rb++;if(n)p.ra++;p.nz+=n;
+    if(codes.has(ic))(S.data[cc]||(S.data[cc]={}))[ic]=yi.map(j=>{const v=row[j];return v===''||v==null||isNaN(+v)?null:Math.round(+v*10)/10})}
+   pg(label,r.meta.cursor/file.size)}catch(e){ps.abort();rej(e)}},
+  complete:()=>{delete S.ds;res(S)},error:rej})})}
+async function go(){
+ try{$('go').disabled=true;const raw=await scan(F1,'อ่านไฟล์ก่อนคลีน');const cl=F2?await scan(F2,'อ่านไฟล์หลังคลีน'):null;
+  const afg=raw.order.indexOf('AFG'),isA=cc=>cl&&cl.et>=0&&cc in cl.ent?cl.ent[cc]:(afg>=0?raw.order.indexOf(cc)<afg:false),n=raw.yrs.length,c={};
+  raw.order.forEach(cc=>{const dd=raw.data[cc];if(!dd)return;const e={};
+   DEF.forEach(k=>{const a=dd[k.cd[0]],b=k.cd[1]?dd[k.cd[1]]:(a?a.map(x=>x==null?null:Math.round((100-x)*10)/10):null);if(a&&b&&a.some(x=>x!=null))e[k.id]={f:a,m:b}});
+   if(Object.keys(e).length)c[cc]=[raw.names[cc],e,isA(cc)?1:0]});
+  if(!Object.keys(c).length)throw new Error('ไม่พบตัวชี้วัดหญิง-ชายที่หน้านี้ใช้ในไฟล์ (ตรวจสอบคอลัมน์ Indicator Code)');
+  const g={rb:raw.rows,ra:cl?cl.rows:raw.keep,mb:100*(1-raw.nn/raw.cells),ma:cl?100*(1-cl.nn/cl.cells):100*(1-raw.nn/(raw.keep*n)),ni:Object.keys(raw.per).length,ne:raw.order.length};
+  const per=DEF.map(k=>{const r=raw.per[k.cd[0]]||{rb:0,ra:0,nz:0},a=cl?(cl.per[k.cd[0]]||{rb:0,nz:0}):null,ra=a?a.rb:r.ra,nzA=a?a.nz:r.nz;
+   return{rb:r.rb,ra,mb:r.rb?100*(1-r.nz/(r.rb*n)):0,ma:ra?100*(1-nzA/(ra*n)):0}});
+  const mA=cl?{rows:cl.rows,cells:cl.cells,nn:cl.nn,dup:cl.dup,bad:cl.bad}:{rows:raw.keep,cells:raw.keep*n,nn:raw.nn,dup:raw.dup,bad:raw.bad};D={years:raw.yrs,c,q:{g,per},cl:!!cl,m:{before:{rows:raw.rows,cells:raw.cells,nn:raw.nn,dup:raw.dup,bad:raw.bad},after:mA},fn:{before:F1.name,after:cl?F2.name:null}};Y=raw.yrs;start();pg('');idbSet('f1',F1);idbSet('f2',F2||null)}
+ catch(e){pg('เกิดข้อผิดพลาด: '+e.message);$('go').disabled=!F1}}
+function start(){
+ const mx=Math.max(...Y),mn=Math.min(...Y);st.y=Math.min(2023,mx);if(!D.c[st.c]||D.c[st.c][2])st.c=Object.keys(D.c).find(k=>k!=='WLD'&&!D.c[k][2])||Object.keys(D.c)[0];
+ $('ys').innerHTML='';for(let y=mx;y>=mn;y--)$('ys').add(new Option(y,y));$('ys').value=st.y;fill();
+ const g=D.q.g;$('dq1').textContent=`${fmt(g.rb,0)} แถว (${g.ne} ประเทศ/กลุ่ม × ${g.ni} ตัวชี้วัด)`;$('dq2').textContent=`เหลือ ${fmt(g.ra,0)} แถว (ลบ ${fmt(g.rb-g.ra,0)} แถว)`;
+ $('dq3').textContent=`ไฟล์ของคุณมี ${g.ni} ตัวชี้วัด หน้านี้ใช้ 9 ตัวที่เกี่ยวกับหญิง-ชาย`;
+ $('qsrc').textContent=D.cl?'ผลหลังคลีนมาจากไฟล์ที่คุณอัปโหลดในช่อง ②':'คุณไม่ได้อัปโหลดไฟล์หลังคลีน ระบบจึงคลีนให้อัตโนมัติ (ลบแถวที่ไม่มีค่าเลย และแยกกลุ่มรวมออกจากประเทศ)';
+ $('up').hidden=true;$('app').hidden=false;$('mainctl').hidden=false;stopPlay();$('yr').min=mn;$('yr').max=mx;render();dqcheck()}
+const RNG={lfp:[0,100],un:[0,100],sec:[0,200],le:[0,120],pa:[0,100]};
+function outl(v){if(v.length<8)return 0;v=v.slice().sort((a,b)=>a-b);const q=p=>v[Math.floor((v.length-1)*p)],a=q(.25),b=q(.75),i=b-a;return v.filter(x=>x<a-1.5*i||x>b+1.5*i).length}
+function calc(v){
+ const m=D.m[v],n=Y.length,items=[];let out=0,oor=0,nt=0;
+ DEF.forEach((k,i)=>{const p=D.q.per[i],rows=v==='before'?p.rb:p.ra,pct=v==='before'?p.mb:p.ma,miss=Math.round(rows*n*pct/100),[lo,hi]=RNG[k.id];let o=0,r=0;
+  ['f','m'].forEach(s=>{if(s==='m'&&k.id==='pa')return;const vals=[];Object.values(D.c).forEach(e=>{const a=e[1][k.id];if(a)a[s].forEach(x=>{if(x!=null)vals.push(x)})});nt+=vals.length;o+=outl(vals);r+=vals.filter(x=>x<lo||x>hi).length});
+  out+=o;oor+=r;
+  items.push([miss>0,`${k.t}: ข้อมูลว่าง ${fmt(miss,0)} ช่อง (${fmt(pct)}%) ในตัวชี้วัดฝั่งหญิง`],[o>0,`${k.t}: ค่าสุดโต่งทางสถิติที่อาจพบ ${fmt(o,0)} ค่า (วิธี IQR)`],[r>0,`${k.t}: ค่านอกช่วงที่เป็นไปได้ ${fmt(r,0)} ค่า (ช่วงที่ยอมรับ ${lo}–${hi})`]);});
+ const empty=v==='before'?D.q.g.rb-D.q.g.ra:0;
+ items.unshift([empty>0,`แถวที่ไม่มีค่าเลยทุกปี: ${fmt(empty,0)} แถว`],[m.bad>0,`ชื่อหรือรหัสประเทศ/ตัวชี้วัดที่ว่าง: ${fmt(m.bad,0)} แถว`],[m.dup>0,`แถวซ้ำ (ประเทศ + ตัวชี้วัดเดียวกัน): ${fmt(m.dup,0)} แถว`]);
+ const C=m.nn/m.cells,U=1-m.dup/m.rows,V=Math.max(0,1-(m.bad/m.rows+oor/Math.max(1,nt)));
+ return{m,items,out,oor,miss:m.cells-m.nn,C,U,V,score:100*(.5*C+.25*U+.25*V)}}
+function dqcheck(){
+ const v=$('qv').value,a=calc(v),o=calc(v==='before'?'after':'before'),b=v==='before'?a:o,f=v==='before'?o:a,m=a.m;
+ $('dqf').textContent=(v==='before'?D.fn.before:(D.fn.after||D.fn.before+' (คลีนอัตโนมัติ)'))+' · '+fmt(m.rows,0)+' records';
+ const lab=s=>s>=80?'ดี':s>=50?'พอใช้':'ต้องระวัง';
+ $('dqk').innerHTML=[['เซลล์ว่าง (Missing Cells)',fmt(a.miss,0),fmt(100-a.C*100)+'% ของเซลล์ปีทั้งหมด'],['แถวซ้ำ (Duplicate Rows)',fmt(m.dup,0),'ประเทศ + ตัวชี้วัดซ้ำกัน'],['ค่าสุดโต่ง (Outliers)',fmt(a.out,0),'ใน 9 ตัวชี้วัดที่หน้านี้ใช้'],['คะแนนคุณภาพ (Quality Score)',fmt(a.score)+'%',lab(a.score)+' · ก่อนคลีน '+fmt(b.score)+'% → หลังคลีน '+fmt(f.score)+'%']].map(([t,x,s])=>`<div class="k"><h3 class="mu sm" style="font-weight:400">${t}</h3><div class="big">${x}</div><p class="sm mu" style="margin:0">${s}</p></div>`).join('');
+ $('dqs').textContent=`คะแนน = 50% ความครบถ้วน (${fmt(a.C*100)}%) + 25% ไม่ซ้ำ (${fmt(a.U*100)}%) + 25% ความถูกต้อง (${fmt(a.V*100)}%) · ค่าสุดโต่งไม่ถูกหักคะแนน เพราะเป็นค่าจริงที่ต่างจากส่วนใหญ่ได้ ข้อมูลชุดนี้ว่างมากโดยธรรมชาติ คะแนนจึงไม่สูง`;
+ $('dql').innerHTML=a.items.map(([w,s])=>`<div class="it ${w?'w':'ok'}">${w?'⚠':'✓'} ${s}</div>`).join('');
+ QR='รายการ,ผลตรวจ\n'+[['ไฟล์',$('dqf').textContent],['เซลล์ว่าง',a.miss],['แถวซ้ำ',m.dup],['ค่าสุดโต่ง',a.out],['คะแนนคุณภาพ(%)',a.score.toFixed(1)]].concat(a.items.map(([w,s])=>[w?'พบปัญหา':'ผ่าน',s])).map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')).join('\n');
+}
+let QR='';
+$('qv').onchange=()=>D&&dqcheck();
+$('qre').onclick=()=>{if(!D)return;$('qre').textContent='กำลังตรวจสอบ…';setTimeout(()=>{dqcheck();$('qre').textContent='ตรวจสอบอีกครั้ง'},200)};
+$('qcp').onclick=()=>{if(!D)return;const ta=$('qta');ta.value=QR;const ok=()=>{$('qcp').textContent='คัดลอกแล้ว ✓';ta.hidden=true;setTimeout(()=>$('qcp').textContent='คัดลอกรายงาน CSV',1800)},no=()=>{ta.hidden=false;ta.select()};
+ try{navigator.clipboard.writeText(QR).then(ok,()=>{ta.hidden=false;ta.select();try{document.execCommand('copy')?ok():no()}catch(e){no()}})}catch(e){no()}};
+['t1','t2','t3'].forEach(id=>$(id).value=st[id]);
+Chart.defaults.animation=false;Chart.defaults.font.family="'IBM Plex Sans Thai','Sarabun',system-ui,sans-serif";
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+async function exportPDF(){
+ if(!D)return;stopPlay();
+ if(!window.jspdf||!window.html2canvas){alert('โหลดตัวสร้าง PDF ไม่สำเร็จ ตรวจสอบอินเทอร์เน็ต หรือกดปุ่ม “พิมพ์” แล้วเลือกบันทึกเป็น PDF');return}
+ const root=document.documentElement,prev=root.getAttribute('data-theme'),ov=$('busy'),tx=$('busyt'),s0={i:st.i,j:st.j};
+ ov.hidden=false;tx.textContent='กำลังเตรียมหน้า…';
+ try{
+  root.setAttribute('data-theme','light');document.body.classList.add('pdfmode');render();await wait(500);
+  const doc=new window.jspdf.jsPDF({unit:'mm',format:'a4'}),PW=210,PH=297,M=10,CW=PW-2*M,CH=PH-2*M,A=[...$('app').children];let y=M;
+  const add=async el=>{if(!el||!el.offsetHeight)return;const cv=await html2canvas(el,{scale:2,backgroundColor:'#ffffff',windowWidth:1100,logging:false}),h=cv.height*CW/cv.width;
+   if(h<=CH){if(y+h>PH-M&&y>M){doc.addPage();y=M}doc.addImage(cv.toDataURL('image/jpeg',.92),'JPEG',M,y,CW,h);y+=h+4}
+   else{if(y>M){doc.addPage();y=M}const ph=Math.floor(CH*cv.width/CW);
+    for(let o=0;o<cv.height;o+=ph){const sh=Math.min(ph,cv.height-o),c2=document.createElement('canvas');c2.width=cv.width;c2.height=sh;
+     const g=c2.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c2.width,sh);g.drawImage(cv,0,o,cv.width,sh,0,0,cv.width,sh);
+     if(o>0){doc.addPage();y=M}const hh=sh*CW/cv.width;doc.addImage(c2.toDataURL('image/jpeg',.92),'JPEG',M,y,CW,hh);y=M+hh+4}}};
+  await add($('hero'));await add(A[0]);
+  for(let n=0;n<I.length;n++){tx.textContent='กำลังสร้าง PDF… หัวข้อ '+(n+1)+'/'+I.length;st.i=n;st.j=n;render();await wait(250);await add(A[1]);await add(A[2]);await add(A[3])}
+  tx.textContent='กำลังสร้าง PDF… สรุปคุณภาพข้อมูล';await add(A[4]);await add(A[5]);
+  const N=doc.getNumberOfPages();doc.setFontSize(8);doc.setTextColor(120);
+  for(let p=1;p<=N;p++){doc.setPage(p);doc.text(p+' / '+N,PW/2,PH-4,{align:'center'})}
+  doc.save('gender-gap-'+st.c+'-'+st.y+'.pdf');
+ }catch(e){alert('สร้าง PDF ไม่สำเร็จ: '+e.message+'\nลองใช้ปุ่ม “พิมพ์” แล้วเลือกบันทึกเป็น PDF แทน')}
+ finally{st.i=s0.i;st.j=s0.j;document.body.classList.remove('pdfmode');prev?root.setAttribute('data-theme',prev):root.removeAttribute('data-theme');render();ov.hidden=true}
+}
+(function(){const root=document.documentElement,b=$('tg');
+const cur=()=>root.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+const sync=()=>{const d=cur()==='dark';b.textContent=d?'ธีมสว่าง':'ธีมมืด';b.setAttribute('aria-pressed',d)};
+try{const t=localStorage.getItem('theme');if(t==='light'||t==='dark')root.setAttribute('data-theme',t)}catch(e){}
+b.onclick=()=>{const n=cur()==='dark'?'light':'dark';root.setAttribute('data-theme',n);try{localStorage.setItem('theme',n)}catch(e){}sync();if(D)render()};sync()})();
+st.c2='';
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function fill2(){const c=$('cs2');c.innerHTML='<option value="">ไม่เทียบ</option>';ents().sort((a,b)=>a[1][0].localeCompare(b[1][0])).forEach(([k,v])=>{if(k!==st.c)c.add(new Option(v[0],k))});if(![...c.options].some(o=>o.value===st.c2))st.c2='';c.value=st.c2}
+function cmpLine(k){if(!st.c2||!D.c[st.c2])return'';const n2=esc(D.c[st.c2][0]),r=at(st.c2,k,st.y);if(!r)return`<p class="sm mu" style="margin:4px 0 0">${n2}: ไม่มีข้อมูล</p>`;const g=r.f-r.m;return`<p class="sm" style="margin:4px 0 0">${n2}: ${g>=0?'+':'−'}${fmt(Math.abs(g))} ${k.u==='%'?'จุด':'ปี'} (ปี ${r.y})</p>`}
+function ctx(){const e=$('ctx');e.replaceChildren(...[D.c[st.c][0],st.c2&&D.c[st.c2]?'เทียบกับ '+D.c[st.c2][0]:null,'ปี '+st.y,st.v==='after'?'ข้อมูลหลังคลีน':'ข้อมูลก่อนคลีน'].filter(Boolean).map(t=>{const x=document.createElement('span');x.className='chip';x.textContent=t;return x}));e.hidden=false;$('sum').textContent=summ();$('meta').textContent=metaTxt();$('yr').value=st.y;$('yl').textContent=st.y;$('bl').textContent='(เส้นขาดคือค่าของ '+bnm()+' · เส้นประจุดคือประเทศที่เทียบ)';}
+function dl(b,n){const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=n;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+function exportCSV(){const rows=[['ประเทศ','รหัส','หัวข้อ','หน่วย','ปี','หญิง','ชาย','ช่องว่าง (หญิง−ชาย)']];
+ [st.c,st.c2].filter(x=>x&&D.c[x]).forEach(c=>I.forEach(k=>{const a=D.c[c][1][k.id];if(!a)return;Y.forEach((y,i)=>{const f=a.f[i],m=a.m[i];if(f==null&&m==null)return;rows.push([D.c[c][0],c,k.t,k.u,y,f,m,f!=null&&m!=null?Math.round((f-m)*10)/10:''])})}));
+ dl(new Blob(['\uFEFF'+rows.map(r=>r.map(x=>'"'+String(x==null?'':x).replace(/"/g,'""')+'"').join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'}),'gender-gap-'+st.c+(st.c2?'-vs-'+st.c2:'')+'.csv')}
+const idb=()=>new Promise((res,rej)=>{const r=indexedDB.open('gstats',1);r.onupgradeneeded=()=>r.result.createObjectStore('f');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+async function idbSet(k,v){try{const d=await idb();await new Promise((res,rej)=>{const t=d.transaction('f','readwrite');v==null?t.objectStore('f').delete(k):t.objectStore('f').put(v,k);t.oncomplete=res;t.onerror=()=>rej(t.error)})}catch(_){}}
+async function idbGet(k){try{const d=await idb();return await new Promise((res,rej)=>{const q=d.transaction('f').objectStore('f').get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}catch(_){return null}}
+(async()=>{const a=await idbGet('f1');if(!a)return;const b=await idbGet('f2');$('last').hidden=$('fg').hidden=false;$('last').textContent='ใช้ไฟล์ล่าสุด: '+a.name;
+ $('last').onclick=()=>{pick(1,a);if(b)pick(2,b);go()};$('fg').onclick=async()=>{await idbSet('f1',null);await idbSet('f2',null);$('last').hidden=$('fg').hidden=true}})();
+$('cs2').onchange=()=>{st.c2=$('cs2').value;render()};$('csvb').onclick=()=>D&&exportCSV();
+st.b='WLD';
+const bnm=()=>D.c[st.b]?D.c[st.b][0]:'กลุ่มอ้างอิง';
+function fillB(){const c=$('bs');c.innerHTML='';Object.entries(D.c).filter(([k,v])=>v[2]||k==='WLD').sort((a,b)=>a[0]==='WLD'?-1:b[0]==='WLD'?1:a[1][0].localeCompare(b[1][0])).forEach(([k,v])=>c.add(new Option(v[0],k)));
+ if(![...c.options].some(o=>o.value===st.b))st.b=c.options.length?c.options[0].value:'';c.value=st.b}
+function summ(){const name=D.c[st.c][0],W=st.b,bn=D.c[W]?D.c[W][0]:null,R=[],miss=[],old=[];
+ I.forEach(k=>{const r=at(st.c,k,st.y),w=D.c[W]?at(W,k,st.y):null;if(!r){miss.push(k.t);return}if(r.y<st.y)old.push(`${k.t} (ใช้ปี ${r.y})`);R.push({k,g:r.f-r.m,d:w?Math.abs(r.f-r.m)-Math.abs(w.f-w.m):null})});
+ if(!R.length)return`ไม่มีข้อมูลของ ${name} ในหัวข้อใดเลย`;
+ const ds=x=>`${x.k.t} (${x.g>=0?'+':'−'}${fmt(Math.abs(x.g))} ${x.k.u==='%'?'จุด':'ปี'})`,hi=R.filter(x=>x.g>0).map(x=>x.k.t),lo=R.filter(x=>x.g<0).map(x=>x.k.t),w=R.filter(x=>x.d!=null).sort((a,b)=>a.d-b.d);
+ let t=`รายงานสรุปของ ${name} ปี ${st.y}: ผู้หญิงสูงกว่าผู้ชายใน ${hi.length} หัวข้อ${hi.length?' ('+hi.join(', ')+')':''} และต่ำกว่าใน ${lo.length} หัวข้อ${lo.length?' ('+lo.join(', ')+')':''}.`;
+ const nr=w.length&&w[0].d<0?w[0]:null,wd=w.length&&w[w.length-1].d>0?w[w.length-1]:null;
+ if(bn&&nr)t+=` เมื่อเทียบกับ${bn} ช่องว่างแคบกว่ามากที่สุดคือ ${ds(nr)}`+(wd&&wd!==nr?` และกว้างกว่ามากที่สุดคือ ${ds(wd)}`:'')+'.';else if(bn&&wd)t+=` เมื่อเทียบกับ${bn} ช่องว่างกว้างกว่ามากที่สุดคือ ${ds(wd)}.`;
+ if(old.length)t+=` หมายเหตุ: บางหัวข้อยังไม่มีข้อมูลปี ${st.y} จึงใช้ปีล่าสุดก่อนหน้า ได้แก่ ${old.join(', ')}.`;
+ if(miss.length)t+=` ไม่มีข้อมูลเลย: ${miss.join(', ')}.`;return t}
+const metaTxt=()=>'สร้างเมื่อ '+new Date().toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'})+' · ไฟล์ข้อมูล: '+(st.v==='before'?D.fn.before:(D.fn.after||D.fn.before+' (คลีนอัตโนมัติ)'))+' · แหล่งข้อมูล: World Bank Gender Statistics';
+const rgbOf=h=>{h=String(h).trim().replace('#','');if(h.length===3)h=[...h].map(x=>x+x).join('');return[0,2,4].map(i=>parseInt(h.substr(i,2),16)||0)};
+const mixc=(Z,C,t)=>'rgb('+Z.map((z,i)=>Math.round(z+(C[i]-z)*t)).join(',')+')';
+const ISO=JSON.parse('{"533":"ABW","004":"AFG","024":"AGO","660":"AIA","248":"ALA","008":"ALB","020":"AND","784":"ARE","032":"ARG","051":"ARM","016":"ASM","010":"ATA","260":"ATF","028":"ATG","036":"AUS","040":"AUT","031":"AZE","108":"BDI","056":"BEL","204":"BEN","535":"BES","854":"BFA","050":"BGD","100":"BGR","048":"BHR","044":"BHS","070":"BIH","652":"BLM","112":"BLR","084":"BLZ","060":"BMU","068":"BOL","076":"BRA","052":"BRB","096":"BRN","064":"BTN","074":"BVT","072":"BWA","140":"CAF","124":"CAN","166":"CCK","756":"CHE","152":"CHL","156":"CHN","384":"CIV","120":"CMR","180":"COD","178":"COG","184":"COK","170":"COL","174":"COM","132":"CPV","188":"CRI","192":"CUB","531":"CUW","162":"CXR","136":"CYM","196":"CYP","203":"CZE","276":"DEU","262":"DJI","212":"DMA","208":"DNK","214":"DOM","012":"DZA","218":"ECU","818":"EGY","232":"ERI","732":"ESH","724":"ESP","233":"EST","231":"ETH","246":"FIN","242":"FJI","238":"FLK","250":"FRA","234":"FRO","583":"FSM","266":"GAB","826":"GBR","268":"GEO","831":"GGY","288":"GHA","292":"GIB","324":"GIN","312":"GLP","270":"GMB","624":"GNB","226":"GNQ","300":"GRC","308":"GRD","304":"GRL","320":"GTM","254":"GUF","316":"GUM","328":"GUY","344":"HKG","334":"HMD","340":"HND","191":"HRV","332":"HTI","348":"HUN","360":"IDN","833":"IMN","356":"IND","086":"IOT","372":"IRL","364":"IRN","368":"IRQ","352":"ISL","376":"ISR","380":"ITA","388":"JAM","832":"JEY","400":"JOR","392":"JPN","398":"KAZ","404":"KEN","417":"KGZ","116":"KHM","296":"KIR","659":"KNA","410":"KOR","414":"KWT","418":"LAO","422":"LBN","430":"LBR","434":"LBY","662":"LCA","438":"LIE","144":"LKA","426":"LSO","440":"LTU","442":"LUX","428":"LVA","446":"MAC","663":"MAF","504":"MAR","492":"MCO","498":"MDA","450":"MDG","462":"MDV","484":"MEX","584":"MHL","807":"MKD","466":"MLI","470":"MLT","104":"MMR","499":"MNE","496":"MNG","580":"MNP","508":"MOZ","478":"MRT","500":"MSR","474":"MTQ","480":"MUS","454":"MWI","458":"MYS","175":"MYT","516":"NAM","540":"NCL","562":"NER","574":"NFK","566":"NGA","558":"NIC","570":"NIU","528":"NLD","578":"NOR","524":"NPL","520":"NRU","554":"NZL","512":"OMN","586":"PAK","591":"PAN","612":"PCN","604":"PER","608":"PHL","585":"PLW","598":"PNG","616":"POL","630":"PRI","408":"PRK","620":"PRT","600":"PRY","275":"PSE","258":"PYF","634":"QAT","638":"REU","642":"ROU","643":"RUS","646":"RWA","682":"SAU","729":"SDN","686":"SEN","702":"SGP","239":"SGS","654":"SHN","744":"SJM","090":"SLB","694":"SLE","222":"SLV","674":"SMR","706":"SOM","666":"SPM","688":"SRB","728":"SSD","678":"STP","740":"SUR","703":"SVK","705":"SVN","752":"SWE","748":"SWZ","534":"SXM","690":"SYC","760":"SYR","796":"TCA","148":"TCD","768":"TGO","764":"THA","762":"TJK","772":"TKL","795":"TKM","626":"TLS","776":"TON","780":"TTO","788":"TUN","792":"TUR","798":"TUV","158":"TWN","834":"TZA","800":"UGA","804":"UKR","581":"UMI","858":"URY","840":"USA","860":"UZB","336":"VAT","670":"VCT","862":"VEN","092":"VGB","850":"VIR","704":"VNM","548":"VUT","876":"WLF","882":"WSM","887":"YEM","710":"ZAF","894":"ZMB","716":"ZWE"}');
+const geoP=polys=>polys.map(pg=>pg.map(r=>{let off=0,px=null;const q=r.map(c=>{if(px!=null){const d=c[0]+off-px;if(d>180)off-=360;else if(d<-180)off+=360}const x=c[0]+off;px=x;return[x,c[1]]}),xs=q.map(c=>c[0]),mn=Math.min(...xs),mx=Math.max(...xs),
+ path=sh=>'M'+q.map(c=>((c[0]+sh+180)*4).toFixed(1)+' '+((84-c[1])*4).toFixed(1)).join('L')+'Z';return path(0)+(mx>180?path(-360):'')+(mn<-180?path(360):'')}).join('')).join('')
+let GEO=null,GERR='';
+const GSRC=['https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json','https://cdn.jsdelivr.net/npm/vega-datasets@2.8.0/data/world-110m.json','https://unpkg.com/world-atlas@2.0.2/countries-110m.json'];
+async function loadGeo(){GEO=0;GERR='';let t=null;
+ for(const u of GSRC){try{const r=await fetch(u);if(!r.ok)throw new Error('HTTP '+r.status);t=await r.json();if(t&&t.objects&&t.objects.countries&&t.transform)break;t=null;GERR='รูปแบบข้อมูลไม่ตรงที่คาด'}catch(e){t=null;GERR=e.message||String(e)}}
+ try{if(!t)throw new Error(GERR||'ไม่พบข้อมูล');
+  const [sx,sy]=t.transform.scale,[tx,ty]=t.transform.translate,
+   arcs=t.arcs.map(a=>{let x=0,y=0;return a.map(p=>{x+=p[0];y+=p[1];return[x*sx+tx,y*sy+ty]})}),
+   ring=ids=>{let r=[];ids.forEach(i=>{const a=i<0?arcs[~i].slice().reverse():arcs[i];r=r.concat(r.length?a.slice(1):a)});return r};
+  GEO=t.objects.countries.geometries.map(g=>{const nm=(g.properties&&g.properties.name)||'',id=g.id!=null?ISO[String(g.id).padStart(3,'0')]:(nm==='Kosovo'?'XKX':null),
+   polys=g.type==='Polygon'?[g.arcs]:g.type==='MultiPolygon'?g.arcs:[];return{id:id||('n:'+nm),nm,d:geoP(polys.map(pg=>pg.map(ring)))}}).filter(f=>f.id!=='ATA')
+ }catch(e){GEO=false;GERR=e.message||String(e)}
+ if(D)map()}
+function map(){const box=$('mapv'),k=I[st.j];
+ if(GEO===null){box.textContent='กำลังโหลดแผนที่…';loadGeo();return}
+ if(GEO===0){box.textContent='กำลังโหลดแผนที่…';return}
+ if(GEO===false){box.innerHTML='โหลดรูปร่างประเทศไม่สำเร็จ ('+esc(GERR)+') ต้องต่อเน็ตเพื่อดึงข้อมูลแผนที่ ส่วนอื่นของหน้ายังใช้ได้ตามปกติ <button id="mr" type="button">ลองใหม่</button>';$('mp').textContent='';$('mapl').textContent='';return}
+ const val={};ents().forEach(([c,v])=>{if(v[2])return;const r=at(c,k,st.y);if(r&&r.y>=st.y-5)val[c]=r.f-r.m});
+ const a=Object.values(val).map(Math.abs).sort((x,y)=>x-y),mx=a.length?(a[Math.floor(a.length*.95)]||a[a.length-1]||1):1,u=k.u==='%'?'จุด':'ปี',
+  F=rgbOf(css('--f')),M=rgbOf(css('--m')),Z=rgbOf(css('--ln')),nd=css('--bg'),ln=css('--card'),tx=css('--tx');
+ box.innerHTML=`<svg viewBox="0 0 1440 568" role="img" aria-label="แผนที่ช่องว่างหญิง-ชาย ${esc(k.t)} ปี ${st.y}">`+GEO.slice().sort((x,y)=>(x.id===st.c)-(y.id===st.c)).map(f=>{const g=val[f.id],nm=D.c[f.id]?D.c[f.id][0]:(f.nm||f.id),sel=f.id===st.c;
+  return`<path d="${f.d}" data-c="${f.id}" fill="${g==null?nd:mixc(Z,g>=0?F:M,Math.min(1,Math.abs(g)/mx))}" stroke="${sel?tx:ln}" stroke-width="${sel?2:.6}"><title>${esc(nm)}: ${g==null?'ไม่มีข้อมูล':(g>=0?'+':'−')+fmt(Math.abs(g))+' '+u}</title></path>`}).join('')+'</svg>';
+ $('mp').textContent=`${k.t} ปี ${st.y}: ${Object.keys(val).length} ประเทศมีข้อมูล: หญิงนำ ${Object.values(val).filter(g=>g>0).length} ประเทศ ชายนำ ${Object.values(val).filter(g=>g<0).length} ประเทศ (ใช้ข้อมูลย้อนหลังไม่เกิน 5 ปี) · สีอ่อนที่เท่าพื้นหลังคือไม่มีข้อมูล · กดที่ประเทศเพื่อดูรายละเอียด`;
+ const c=m=>mixc(Z,m,1);$('mapl').innerHTML=`<div style="height:10px;border-radius:5px;background:linear-gradient(90deg,${c(M)},${mixc(Z,M,0)},${c(F)})"></div><div style="display:flex;justify-content:space-between" class="mu"><span>ชายนำ ${fmt(mx)} ${u}</span><span>หญิง = ชาย</span><span>หญิงนำ ${fmt(mx)} ${u}</span></div>`}
+$('mapv').onclick=e=>{if(e.target.id==='mr'){GEO=null;map();return}const p=e.target.closest('path');if(!p)return;const c=p.dataset.c;if([...$('cs').options].some(o=>o.value===c)){st.c=c;$('cs').value=c;fill2();render()}};
+let PT=null;const stopPlay=()=>{clearInterval(PT);PT=null;$('pl').textContent='▶ เล่น'};
+$('pl').onclick=()=>{if(PT)return stopPlay();const mx=Math.max(...Y);if(st.y>=mx){st.y=Math.min(...Y);$('ys').value=st.y;render()}$('pl').textContent='❚❚ หยุด';PT=setInterval(()=>{if(st.y>=mx)return stopPlay();st.y++;$('ys').value=st.y;render()},900)};
+$('yr').oninput=()=>{stopPlay();st.y=+$('yr').value;$('ys').value=st.y;render()};
+$('bs').onchange=()=>{st.b=$('bs').value;render()};$('re').addEventListener('click',stopPlay);
+$('pdf').onclick=exportPDF;$('prt').onclick=()=>window.print();
+
+build();
+</script>
+</body></html>
